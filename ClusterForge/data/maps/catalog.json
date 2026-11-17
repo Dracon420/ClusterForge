@@ -1,0 +1,164 @@
+{
+  "_comment": "Known ASA maps. 'key' names the image file in data/maps/images (key.jpg|png|webp) and must stay stable. 'map_name' is the value ARK is launched with and is what links a map to a server. Mod maps carry the CurseForge id that must be in -mods= for the map to load at all. 'save_folder' is only needed when the SavedArks folder is not named after map_name. 'session_name' is only needed when a map has to break the [ToDs]Dracon-<Name> pattern. Adding a map to the rotation is adding an entry here -- nothing in the code needs to know about it.",
+  "maps": [
+    {
+      "key": "theisland",
+      "name": "The Island",
+      "map_name": "TheIsland_WP",
+      "kind": "official",
+      "released": "2023-10-25",
+      "exclusive_mods": ["947442"],
+      "notes": "The base map. Saves live in SavedArks/TheIsland_WP. exclusive_mods: Additional IslandDinos (947442) is Island-only - it crashes Ragnarok on boot (tested 2026-09-15) - so a map switch removes it when leaving The Island and adds it back on return."
+    },
+    {
+      "key": "thecenter",
+      "name": "The Center",
+      "map_name": "TheCenter_WP",
+      "kind": "official",
+      "released": "2024-06-01",
+      "notes": "Free official map."
+    },
+    {
+      "key": "scorchedearth",
+      "name": "Scorched Earth",
+      "map_name": "ScorchedEarth_WP",
+      "kind": "official",
+      "released": "2024-04-01",
+      "notes": "Desert map. Wyverns, heat and water management."
+    },
+    {
+      "key": "aberration",
+      "name": "Aberration",
+      "map_name": "Aberration_WP",
+      "kind": "official",
+      "released": "2024-12-01",
+      "notes": "Underground map. Radiation zones and charge light."
+    },
+    {
+      "key": "extinction",
+      "name": "Extinction",
+      "map_name": "Extinction_WP",
+      "kind": "official",
+      "released": "2025-03-01",
+      "notes": "Ruined Earth. Titans and orbital supply drops."
+    },
+    {
+      "key": "astraeos",
+      "name": "Astraeos",
+      "map_name": "Astraeos_WP",
+      "kind": "official",
+      "released": "2024-11-01",
+      "notes": "Official-adopted community map."
+    },
+    {
+      "key": "ragnarok",
+      "name": "Ragnarok",
+      "map_name": "Ragnarok_WP",
+      "kind": "official",
+      "released": "2025-06-01",
+      "notes": "Large community map, officially ported to ASA."
+    },
+    {
+      "key": "valguero",
+      "name": "Valguero",
+      "map_name": "Valguero_WP",
+      "kind": "official",
+      "notes": "Community map officially ported to ASA. Its SavedArks folder already exists in the Island install."
+    },
+    {
+      "key": "lostcolony",
+      "name": "Lost Colony",
+      "map_name": "LostColony_WP",
+      "kind": "official",
+      "notes": "Expansion map. Ships in the installed server build (pakchunk8)."
+    },
+    {
+      "key": "genesis",
+      "name": "Genesis Part 1",
+      "map_name": "Genesis_WP",
+      "kind": "official",
+      "released": "2026-07-03",
+      "notes": "Simulation map with VR missions. Ships in the installed server build (pakchunk10)."
+    },
+    {
+      "key": "svartalfheim",
+      "name": "Svartalfheim",
+      "map_name": "Svartalfheim_WP",
+      "kind": "mod",
+      "mod_id": "942355",
+      "mod_name": "Svartalfheim Testversion [Crossplay & Console Version]",
+      "save_folder": "Svartalfheim",
+      "notes": "Mod map, first in this server's load order. The save FOLDER is 'Svartalfheim' with no _WP suffix even though the .ark file inside is Svartalfheim_WP.ark - that is this map's real convention, not a typo to fix. Requires mod 942355 in -mods=. NOTE the ARK wiki lists a different id for this mod; 942355 is what the live server actually boots with, so it wins."
+    },
+    {
+      "key": "bjarnheim",
+      "name": "Bjarnheim",
+      "map_name": "Bjarnheim_WP",
+      "kind": "mod",
+      "mod_id": "1376189",
+      "mod_name": "Bjarnheim",
+      "save_folder": "Bjarnheim",
+      "notes": "Nordic mod map by Nekatus, the same author as Svartalfheim. Map name and mod id are from the mod's own CurseForge description. It borrows assets from Ragnarok, Valguero, Scorched Earth, Extinction, Aberration, Lost Colony and Genesis 1 - all of which ship in this build, so nothing extra is needed. Its save folder name is UNCONFIRMED: Svartalfheim by the same author drops the _WP suffix, so check which folder appears under SavedArks after the first boot and set save_folder here if it is not Bjarnheim_WP."
+    },
+    {
+      "key": "amissa",
+      "name": "Amissa",
+      "map_name": "Amissa_WP",
+      "kind": "mod",
+      "mod_id": "965379",
+      "mod_name": "Amissa",
+      "companion_mods": ["1007416"],
+      "save_folder": "Amissa",
+      "notes": "Save folder CONFIRMED 'Amissa' (no _WP) on first boot 2026-09-14 - the same convention as Svartalfheim; without this field backups pointed at a non-existent Amissa_WP folder. Free mod map by sicco0803, 6 biomes, ~90% complete, updated Aug 2026, 'a bit bigger than The Island'. No DLC maps required. REQUIRES the companion mod Amissa Additions (1007416) for its custom creatures - added automatically on switching here. That companion is deliberately NOT stripped on switching away: its author says it is also needed on any map Amissa creatures are transferred to, and removing a mod deletes the tames stored in it. Xbox support UNCONFIRMED - page says only 'Cross-Platform', same as Nyrandil which crashed Xbox clients, and there is no separate console build. Save folder assumed Amissa_WP; confirm after first boot."
+    },
+    {
+      "key": "nyrandil",
+      "name": "Nyrandil",
+      "map_name": "Nyrandil",
+      "kind": "mod",
+      "mod_id": "965599",
+      "mod_name": "Nyrandil",
+      "notes": "CRASHES XBOX CLIENTS - tested 2026-09-14: the mod downloads and the Xbox reaches the server, then the game hard-closes to the Xbox home screen on every join attempt. No console/crossplay build exists (compare Svartalfheim, which ships a dedicated console version). Server-side it ran fine but commits ~9.2 GB. Free fantasy mod map by YuTay, ~93% complete and actively updated (Aug 2026). The map name is genuinely 'Nyrandil' with NO _WP suffix - quoted from the author's own 'Map Parameter Name : Nyrandil' line - so do not 'fix' it. No companion mods or DLC maps required. Runs as its own dedicated server on PC2 (second install at C:\\ASA-Server-2\\Nyrandil) rather than as a rotation map. Save folder assumed to be 'Nyrandil'; confirm under SavedArks after the first boot.",
+      "xbox": "crashes"
+    },
+    {
+      "key": "forglar1",
+      "name": "Forglar Part I",
+      "map_name": "Forglar_WP",
+      "kind": "mod",
+      "mod_id": "1009169",
+      "mod_name": "Forglar Part I (MAP)",
+      "paid": true,
+      "notes": "PAID mod by SnowyTrain. Every player must buy it on their own CurseForge account before they can join - CurseForge blocks joining a server that runs a premium mod otherwise - so this is a community decision, not just a map switch. Map name and id are from the mod's own CurseForge page. A free 'Forglar (Free test Version)' (935835) shares the Forglar_WP map name but is superseded and no longer updated, so it is deliberately not the one catalogued. Save folder unconfirmed - check SavedArks after the first boot."
+    },
+    {
+      "key": "forglar2",
+      "name": "Forglar Part II",
+      "map_name": "Forglar2_WP",
+      "kind": "mod",
+      "mod_id": "1406494",
+      "mod_name": "Forglar Part II (MAP)",
+      "paid": true,
+      "notes": "PAID mod by SnowyTrain, and a separate map from Part I - its own map name, its own mod id, its own world. Same buy-to-join rule as Part I. Its CurseForge page states it needs no other DLC installed. Save folder unconfirmed - check SavedArks after the first boot."
+    },
+    {
+      "key": "clubark",
+      "name": "Club ARK",
+      "map_name": "BobsMissions_WP",
+      "kind": "official-mod",
+      "mod_id": "1005639",
+      "mod_name": "Club ARK",
+      "save_folder": "BobsMissions",
+      "notes": "Free official social hub mod by Wildcard - mini-games and missions, not a survival map. Not really a rotation candidate, but it is official and downloadable so it is listed. Its SavedArks\\BobsMissions folder already exists in the Island install."
+    },
+    {
+      "key": "fjordur",
+      "name": "Fjordur",
+      "map_name": "Fjordur_WP",
+      "kind": "official",
+      "available": false,
+      "unavailable_reason": "Not released for ASA yet. The ARK wiki lists its ASA server map name as unavailable, it is absent from this build's paks, and the roadmap has it no earlier than late 2026. The map name above is a placeholder - confirm it against the wiki when it actually ships.",
+      "notes": "Requested for the rotation, kept here so it is ready the day it lands. ClusterForge refuses to switch to it while available is false."
+    }
+  ]
+}

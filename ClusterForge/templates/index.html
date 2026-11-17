@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- viewport-fit=cover so the page paints under the notch/home bar when this is
+     installed to a phone home screen; the CSS pads for the safe area. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClusterForge</title>
+
+<link rel="icon" href="/static/clusterforge.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#0d0c0a">
+<meta name="color-scheme" content="dark">
+
+<!-- iOS ignores the manifest for home-screen apps and needs its own tags.
+     These are what make Add to Home Screen open standalone instead of in a
+     Safari tab, which matters because iOS gives no install prompt at all. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ClusterForge">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+
+<link rel="stylesheet" href="/static/style.css">
+<!-- Atmosphere only. Remove this one line to get the plain look back. -->
+<link rel="stylesheet" href="/static/theme.css">
+<!-- Last, so its media queries win without !important. -->
+<link rel="stylesheet" href="/static/mobile.css">
+</head>
+<body>
+
+<!-- Two levels of navigation. Which GAME you are looking at, then which part
+     of it. Every game gets the same set of parts, minus the ones it cannot
+     do, so learning one teaches you the others. Both bars are built by
+     app.js from /api/games -- adding a game must not mean editing this file
+     any more than it means editing panel.py. -->
+<div class="gamebar" id="gameBar">
+  <span class="brand">ClusterForge</span>
+  <span class="spacer"></span>
+  <span class="notice" id="modeNotice">&mdash;</span>
+</div>
+
+<div class="menubar" id="menuBar"></div>
+
+<!-- Header band. DSM's account/premium/analytics boxes are replaced with
+     information that is actually useful: real cluster state. -->
+<div class="row" id="headerBand">
+  <div class="group g-green grow">
+    <h3>&#9679; Cluster Health</h3>
+    <dl class="kv" id="clusterHealth"><dd class="muted">loading&hellip;</dd></dl>
+  </div>
+</div>
+
+<!-- Cluster-wide controls, mirroring DSM's Server Controls band. -->
+<div class="row">
+  <div class="group g-red grow">
+    <h3>&#9654; Cluster Controls</h3>
+    <button class="btn green"  data-act="start-all">Start All</button>
+    <button class="btn blue"   data-act="restart-all">Restart All</button>
+    <button class="btn red"    data-act="stop-all">Stop All</button>
+    <button class="btn orange" data-act="update-all">Update All</button>
+    <button class="btn purple" data-act="sur-all">Stop + Update + Restart All</button>
+    <span class="statline" id="controlsNote"></span>
+  </div>
+</div>
+
+<div id="banners"></div>
+
+<!-- Cluster overview: the at-a-glance strip, a card per map, and alerts.
+     Only shown on the Cluster view. -->
+<div id="dashView">
+  <div class="row" id="glanceRow"></div>
+  <div class="cols2" id="mapCards"></div>
+  <!-- Placeholder summary so this never renders as a bare "Details" while the
+       first alert fetch is still in flight. -->
+  <details class="group g-red" id="alertPanel" style="margin-top:5px">
+    <summary class="grouphead">&#9650; Alert history<span class="count">loading&hellip;</span></summary>
+  </details>
+</div>
+
+<!-- The per-server half of the page. Hidden on the Cluster view, which is
+     about the cluster as a whole rather than one map. -->
+<div id="serverView">
+  <!-- Per-server tabs, as in DSM -->
+  <div class="servertabs" id="serverTabs"></div>
+
+  <!-- Server Management Core -->
+  <details class="group g-green" id="coreBox" open>
+    <summary style="cursor:pointer;font-weight:700;color:var(--green);margin-bottom:6px">
+      &#9881; Server Management Core &mdash; click to expand
+    </summary>
+    <div class="coreswitch">
+      <label for="coreServerSelect">Map</label>
+      <select id="coreServerSelect"></select>
+      <span class="statline" id="coreSwitchNote"></span>
+    </div>
+    <div class="cols3" id="coreGrid"><div class="spin">loading&hellip;</div></div>
+  </details>
+
+  <div class="tabstrip" id="tabStrip"></div>
+  <div id="tabBody"><div class="spin">loading&hellip;</div></div>
+</div>
+
+<!-- Cluster-level views. One at a time; all hidden on the Servers view. -->
+<div id="paneUpdates" class="viewpane" hidden><div class="spin">loading&hellip;</div></div>
+<div id="paneBackups" class="viewpane" hidden><div class="spin">loading&hellip;</div></div>
+<div id="paneDiscord" class="viewpane" hidden><div class="spin">loading&hellip;</div></div>
+<div id="panePalworld" class="viewpane" hidden><div class="spin">loading&hellip;</div></div>
+<div id="paneGame" class="viewpane" hidden><div class="spin">loading&hellip;</div></div>
+<!-- The machines themselves: their own top-bar tab (2026-11-12), so the
+     agent buttons are not one stray tap away on every game's page. app.js
+     fills #agentList and #hostStats by id wherever they sit. -->
+<div id="paneSystem" class="viewpane" hidden>
+  <div class="row">
+    <div class="group g-cyan grow">
+      <h3>&#9679; Wardens</h3>
+      <div id="agentList" class="muted">loading&hellip;</div>
+    </div>
+    <div class="group g-orange grow">
+      <h3>&#9679; Host</h3>
+      <dl class="kv" id="hostStats"><dd class="muted">loading&hellip;</dd></dl>
+    </div>
+  </div>
+</div>
+<div id="paneAddGame" class="viewpane" hidden><div class="spin">loading&hellip;</div></div>
+
+<script src="/static/app.js"></script>
+<script>
+/* Register the service worker. Inline rather than inside app.js so a failure
+   loading the main bundle cannot also cost the install prompt.
+   Only runs in a secure context -- over plain http on the LAN the browser
+   refuses registration, which is expected and harmless. */
+if ('serviceWorker' in navigator && window.isSecureContext) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(err => {
+      console.warn('[clusterforge] service worker registration failed:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
