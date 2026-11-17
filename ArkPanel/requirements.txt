@@ -1,0 +1,7 @@
+flask
+waitress
+requests
+psutil
+discord.py
+pywebview
+Pillow

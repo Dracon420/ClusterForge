@@ -1,0 +1,12 @@
+secrets.json
+config.json
+*.cred
+data/*
+!data/maps/
+data/maps/images/
+backups/
+logs/
+__pycache__/
+*.pyc
+*.tmp
+static/bg/

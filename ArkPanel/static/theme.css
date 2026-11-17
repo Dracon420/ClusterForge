@@ -1,0 +1,366 @@
+/* ==========================================================================
+   ArkPanel -- Lost Colony theme.
+
+   Atmosphere on top of style.css. No class names change, so the markup and JS
+   are untouched and deleting the <link> in index.html restores the plain look.
+
+   BACKGROUND IMAGE
+   ----------------
+   Drop a picture in  static/bg/  named background.jpg (or .jpeg, .png, .webp,
+   .avif) and it becomes the page backdrop. No code change and no restart --
+   just reload. The panel serves whichever exists from /api/background, so the
+   file extension does not matter and nothing 404s while looking for it.
+
+   Currently: the ARK Lost Colony key art, 2560x1440.
+
+   No image at all is a normal state, not an error -- /api/background returns
+   204 and the procedural backdrop below carries the look on its own.
+
+   Everything else here is drawn with gradients and inline SVG, because the
+   panel has to look right on a machine with no internet and Wildcard's art is
+   not ours to rehost.
+   ========================================================================== */
+
+:root {
+  --amber-glow: rgba(233, 168, 60, .55);
+  --tek-glow:   rgba(69, 214, 224, .45);
+  /* How much the backdrop shows through. Raise toward 1 for a darker page if
+     your background image is busy; lower it to let more of the art through. */
+  --scrim: .52;
+
+  /* Background image treatment. The Lost Colony key art is 2560x1440, so it
+     runs sharp -- no blur needed. It is busy and brightly lit though, and the
+     UI is dense text, so it is dimmed and sat behind a scrim rather than shown
+     at full strength. Turn --bg-dim up toward 1 for a bolder backdrop, or drop
+     --scrim toward 0 to let more of the art through.
+     Swap the picture by replacing static/bg/background.jpg -- nothing else
+     changes, and a reload picks it up. */
+  --bg-blur: 0px;
+  --bg-dim: .58;
+}
+
+/* ---------- the backdrop ---------- */
+
+body {
+  background-color: var(--bg);
+  min-height: 100vh;
+  position: relative;
+  /* A little more margin than the base sheet, so the artwork is actually
+     visible around the panels instead of being a 6px sliver. */
+  padding: 10px 12px 14px;
+}
+
+/* Layer 1: the photograph, if there is one. Fixed so the page scrolls over it.
+   Three url() layers, first one that exists wins visually; the others simply
+   fail to load and paint nothing. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: url("/api/background");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  /* Knocked back so UI text stays readable over any image. */
+  filter: blur(var(--bg-blur)) saturate(1.15) contrast(1.05)
+          brightness(var(--bg-dim));
+  /* Blur samples past the edges and leaves a pale rim. Only needed when
+     --bg-blur is non-zero; harmless at 1.02 either way. */
+  transform: scale(1.02);
+}
+
+/* Layer 2: procedural atmosphere and the scrim that keeps text legible.
+   This carries the whole look on its own when there is no image. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    /* vignette -- pulls the eye into the middle */
+    radial-gradient(130% 110% at 50% 45%, transparent 38%, rgba(0,0,0,.62) 100%),
+    /* amber sunrise, upper left */
+    radial-gradient(1200px 640px at 6% -12%, rgba(233,168,60,.16), transparent 62%),
+    /* tek bloom, lower right */
+    radial-gradient(1000px 760px at 106% 110%, rgba(69,214,224,.11), transparent 64%),
+    /* hex lattice -- ARK's tek motif, very faint */
+    url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='96' viewBox='0 0 56 96'%3E%3Cpath d='M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z M28 64 L56 80 M28 64 L0 80' fill='none' stroke='%23e9a83c' stroke-opacity='.10' stroke-width='1'/%3E%3C/svg%3E"),
+    /* fine grain, so flat fills read as weathered stone rather than plastic */
+    url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.30'/%3E%3C/svg%3E"),
+    /* base ground, under everything */
+    linear-gradient(180deg, rgba(20,18,13,var(--scrim)) 0%, rgba(13,12,10,var(--scrim)) 45%, rgba(6,6,5,var(--scrim)) 100%);
+  background-size: cover, cover, cover, 56px 96px, 140px 140px, cover;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
+}
+
+body > * { position: relative; z-index: 1; }
+
+/* ---------- menu bar: the header slab ---------- */
+
+.menubar {
+  background:
+    linear-gradient(180deg, rgba(44,38,26,.96) 0%, rgba(23,20,14,.96) 100%);
+  border: 1px solid var(--border-hi);
+  border-bottom: 2px solid var(--amber-d);
+  box-shadow: 0 3px 20px #000000a6, inset 0 1px 0 #ffffff14;
+  backdrop-filter: blur(3px);
+}
+.menubar .brand {
+  color: var(--amber);
+  text-shadow: 0 0 16px var(--amber-glow), 0 0 3px rgba(233,168,60,.9);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+.menubar button {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: .07em;
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+}
+.menubar button:hover { background: #2f2718; color: var(--text); }
+.menubar button.active {
+  color: var(--amber);
+  background: linear-gradient(180deg, #3a2f18, #241d10);
+  border-bottom-color: var(--amber);
+  text-shadow: 0 0 12px var(--amber-glow);
+}
+
+/* ---------- panels: stone slabs with lit edges and HUD corner brackets ------ */
+
+.group {
+  background:
+    linear-gradient(180deg, rgba(32,29,20,.94) 0%, rgba(23,21,15,.94) 55%, rgba(16,14,10,.94) 100%);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 14px #00000073, inset 0 1px 0 #ffffff0d;
+}
+
+/* Lit strip down the left, coloured per section. */
+.group::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--border-hi);
+  border-radius: 3px 0 0 3px;
+}
+.group.g-green::before  { background: linear-gradient(180deg, var(--green),  transparent 85%); box-shadow: 0 0 10px rgba(111,212,74,.4); }
+.group.g-orange::before { background: linear-gradient(180deg, var(--amber),  transparent 85%); box-shadow: 0 0 10px var(--amber-glow); }
+.group.g-red::before    { background: linear-gradient(180deg, var(--red),    transparent 85%); box-shadow: 0 0 10px rgba(255,90,77,.4); }
+.group.g-cyan::before   { background: linear-gradient(180deg, var(--tek),    transparent 85%); box-shadow: 0 0 10px var(--tek-glow); }
+.group.g-purple::before { background: linear-gradient(180deg, var(--purple), transparent 85%); }
+.group.g-yellow::before { background: linear-gradient(180deg, var(--yellow), transparent 85%); }
+
+/* HUD corner bracket, top right. Small, but it is what makes a rectangle read
+   as a readout rather than a box. */
+.group::after {
+  content: "";
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 11px; height: 11px;
+  border-top: 1px solid var(--amber-d);
+  border-right: 1px solid var(--amber-d);
+  opacity: .75;
+  pointer-events: none;
+}
+
+.group > h3 {
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  font-size: 10px;
+  padding-bottom: 5px;
+  margin-bottom: 7px;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(90deg, currentColor, transparent 70%) 1;
+}
+.group.g-green  > h3 { text-shadow: 0 0 10px rgba(111,212,74,.45); }
+.group.g-orange > h3 { color: var(--amber); text-shadow: 0 0 10px var(--amber-glow); }
+.group.g-cyan   > h3 { text-shadow: 0 0 10px var(--tek-glow); }
+.group.g-red    > h3 { text-shadow: 0 0 10px rgba(255,90,77,.4); }
+.group.g-purple > h3 { text-shadow: 0 0 10px rgba(192,140,255,.35); }
+
+.subhead { color: var(--amber); text-transform: uppercase; letter-spacing: .1em; }
+
+/* ---------- buttons: stamped metal ---------- */
+
+.btn {
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border: 1px solid #00000073;
+  border-top-color: #ffffff2e;
+  box-shadow: inset 0 1px 0 #ffffff2b, 0 1px 3px #000a;
+  text-shadow: 0 1px 1px #0008;
+  transition: filter .12s, box-shadow .12s, transform .06s;
+}
+.btn:hover  { filter: brightness(1.25); box-shadow: inset 0 1px 0 #ffffff38, 0 2px 9px #000b; }
+.btn:active { transform: translateY(1px); }
+.btn.green  { background: linear-gradient(180deg, #56b839, var(--btn-green)); }
+.btn.blue   { background: linear-gradient(180deg, #2a8fc4, var(--btn-blue)); }
+.btn.orange { background: linear-gradient(180deg, #e78a22, var(--btn-orange)); }
+.btn.red    { background: linear-gradient(180deg, #c94336, var(--btn-red)); }
+.btn.purple { background: linear-gradient(180deg, #8460d2, var(--btn-purple)); }
+.btn.grey   { background: linear-gradient(180deg, #5f5747, var(--btn-grey)); }
+.btn.teal   { background: linear-gradient(180deg, #1ea0ae, var(--btn-teal)); }
+
+/* ---------- server tabs ---------- */
+
+.servertab {
+  background: linear-gradient(180deg, rgba(35,31,21,.94), rgba(20,18,12,.94));
+  border-color: var(--border);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 11px;
+}
+.servertab:hover { border-color: var(--border-hi); }
+.servertab.active {
+  background: linear-gradient(180deg, #46340f, #281c07);
+  border-color: var(--amber);
+  color: var(--amber);
+  text-shadow: 0 0 10px var(--amber-glow);
+  box-shadow: 0 -3px 16px rgba(233,168,60,.32), inset 0 1px 0 #ffffff1a;
+}
+
+/* ---------- inner tab strip ---------- */
+
+.tabstrip { border-bottom-color: var(--border-hi); }
+.tabstrip button {
+  text-transform: uppercase; font-size: 11px; letter-spacing: .05em; font-weight: 600;
+}
+.tabstrip button:hover { background: #2a2317; }
+.tabstrip button.active {
+  background: linear-gradient(180deg, #46340f, #281c07);
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+  text-shadow: 0 0 9px var(--amber-glow);
+  box-shadow: inset 0 1px 0 #ffffff1a;
+}
+
+/* ---------- tables ---------- */
+
+th {
+  background: linear-gradient(180deg, #2d2716, #1c1810);
+  color: var(--amber);
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: .09em;
+  border-bottom: 1px solid var(--amber-d);
+}
+td { border-bottom-color: #2a2418; }
+tbody tr:hover { background: #2a2317; }
+tbody tr.drift { background: #38290e; }
+tbody tr.drift:hover { background: #453313; }
+tbody tr.selected { background: #10474e !important; box-shadow: inset 3px 0 0 var(--tek); }
+tbody tr.newmod { background: #1d3416; }
+
+/* ---------- inputs ---------- */
+
+input[type="text"], input[type="number"], input[type="time"], textarea, select {
+  background: rgba(8,7,6,.9);
+  border-color: var(--border-hi);
+  box-shadow: inset 0 1px 4px #000b;
+}
+input:focus, textarea:focus, select:focus {
+  outline: 1px solid var(--amber);
+  box-shadow: inset 0 1px 4px #000b, 0 0 10px rgba(233,168,60,.35);
+}
+input[type="checkbox"] { accent-color: var(--amber); }
+input[type="range"]    { accent-color: var(--amber); }
+
+/* ---------- section expanders and settings rows ---------- */
+
+.cat { border-color: var(--border); background: rgba(18,16,11,.9); }
+.cat > summary { background: linear-gradient(180deg, #282216, #1b1810); letter-spacing: .04em; }
+.setting { border-top-color: #2a2418; }
+.setting:hover { background: #262014; }
+.setting.edited { background: #3a2c0e; box-shadow: inset 3px 0 0 var(--amber); }
+.setting.edited input { border-color: var(--amber); }
+
+/* ---------- banners, logs, maps ---------- */
+
+.banner { border-left-width: 3px; box-shadow: 0 2px 8px #0007; }
+.banner.info { background: rgba(15,42,48,.92); border-color: var(--tek);   color: #c4f2f7; }
+.banner.warn { background: rgba(56,42,14,.92); border-color: var(--amber); color: #ffe6bd; }
+.banner.err  { background: rgba(56,22,18,.92); border-color: var(--red);   color: #ffcdc8; }
+.banner.ok   { background: rgba(24,45,15,.92); border-color: var(--green); color: #d3f3c4; }
+
+.logview, .joblog {
+  background: rgba(6,6,5,.94);
+  border-color: var(--border-hi);
+  box-shadow: inset 0 2px 10px #000c;
+  color: #cbc3ad;
+}
+
+.mapcard {
+  background: linear-gradient(180deg, rgba(31,27,19,.94), rgba(17,15,10,.94));
+  border-color: var(--border);
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+}
+.mapcard:hover { border-color: var(--border-hi); transform: translateY(-1px); }
+.mapcard.active {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px var(--amber) inset, 0 0 22px rgba(233,168,60,.26);
+}
+.mapart.placeholder { border-color: var(--border-hi); background: rgba(14,12,8,.9); }
+.pill.on  { background: #2f4218; color: var(--green); }
+.pill.mod { background: #423114; color: var(--amber); }
+
+.coreswitch select { background: rgba(8,7,6,.9); }
+.coreswitch label, .field > label {
+  color: var(--amber); letter-spacing: .09em; font-weight: 600;
+}
+
+/* The live status dot earns a slow pulse -- it is the one thing on the page
+   that says "this is happening right now". */
+@keyframes tekpulse {
+  0%, 100% { box-shadow: 0 0 6px var(--green), 0 0 12px rgba(111,212,74,.45); }
+  50%      { box-shadow: 0 0 10px var(--green), 0 0 22px rgba(111,212,74,.8); }
+}
+.servertab .dot.online { animation: tekpulse 2.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .servertab .dot.online { animation: none; box-shadow: 0 0 7px var(--green); }
+  .mapcard:hover { transform: none; }
+  .btn:active { transform: none; }
+}
+
+/* Collapsible headings match the panel headings. */
+summary.grouphead {
+  text-transform: uppercase; letter-spacing: .13em; font-size: 10px;
+  text-shadow: 0 0 9px rgba(255, 90, 77, .3);
+}
+details.group[open] > summary.grouphead {
+  padding-bottom: 5px;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(90deg, currentColor, transparent 70%) 1;
+}
+summary.grouphead:hover { filter: brightness(1.2); }
+.pill.stale { background: #4d2a0e; color: var(--amber); border-color: var(--amber-d); }
+
+/* ---- game bar ------------------------------------------------------------
+   Two levels of navigation: which GAME, then which part of it. The game bar
+   sits above and reads as the bigger choice, so nobody has to work out that
+   "Palworld" and "Backups" were different kinds of thing in one row. */
+.gamebar {
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.gamebar button {
+  font-weight: 700; font-size: 1.02em;
+  padding: 5px 14px;
+  border-radius: 6px 6px 0 0;
+}
+.gamebar button.active {
+  background: rgba(255,255,255,.10);
+  box-shadow: inset 0 -2px 0 var(--green);
+}
+/* A game that is registered but not set up yet, and the Add button. Present
+   but visibly not the main path. */
+.gamebar button.ghost { opacity: .6; font-weight: 500; }
+.gamebar button.ghost:hover { opacity: 1; }
