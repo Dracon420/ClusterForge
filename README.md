@@ -11,3 +11,9 @@ Two self-hosted Windows projects for running game servers at home and playing an
 [![PCDash](PCDash/docs/screenshots/02-detail.png)](PCDash/)
 
 Both run on Windows 10 or 11 with Python 3.12. See each folder's README for setup.
+
+---
+
+## License
+
+[PolyForm Noncommercial 1.0.0](LICENSE.md). You're free to use, study and change it for personal, hobby, educational and other **noncommercial** purposes. **Commercial use, including selling it or running it as a paid service, isn't allowed** without a separate licence from the author; open an issue to ask.

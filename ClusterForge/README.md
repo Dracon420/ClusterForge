@@ -23,6 +23,7 @@ It's built around one idea: every PC runs a small agent called **Warden** (`agen
 - [Project layout](#project-layout)
 - [Tests](#tests)
 - [Hard-won lessons](#hard-won-lessons)
+- [License](#license)
 
 ---
 
@@ -233,3 +234,9 @@ Everything here came from a real incident:
 - **Never kill a Palworld server or launch it from a terminal**: killing it has corrupted a world. It runs as a scheduled task that owns the process.
 - **A Warden silently running old code** was the most common failure in this project, so each Warden fetches its own code from the panel and reports a fingerprint.
 - **Never run a backup copy before a server start.** A copy to a network share that has gone away can hang and can't be killed, and the server never starts.
+
+---
+
+## License
+
+[PolyForm Noncommercial 1.0.0](LICENSE.md). You're free to use, study and change it for personal, hobby, educational and other **noncommercial** purposes. **Commercial use, including selling it or running it as a paid service, isn't allowed** without a separate licence from the author; open an issue to ask.
